@@ -1,5 +1,5 @@
 """
-RANSAC implementation in python
+3D RANSAC implementation in python
 """
 
 import numpy as np
@@ -105,10 +105,3 @@ if __name__ == "__main__":
     point_cloud = pd.read_csv("point_cloud_data_sample.xyz", delimiter=" ", nrows=500)
     APPLICATION = RANSAC(point_cloud, max_iterations=50, distance_ratio_threshold=1)
     APPLICATION.run()
-
-
-
-
-
-
-
