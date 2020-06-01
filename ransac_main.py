@@ -100,6 +100,7 @@ class RANSAC:
 
         return inlier_points, outlier_points
 
+
 if __name__ == "__main__":
     # Read the point cloud data
     point_cloud = pd.read_csv("point_cloud_data_sample.xyz", delimiter=" ", nrows=500)
