@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import random
 import math
 from mpl_toolkits.mplot3d import Axes3D
+import open3d as o3d
 
 
 class RANSAC:
@@ -58,9 +59,16 @@ class RANSAC:
                 random_index = random.randint(0, len(self.point_cloud.X)-1)
                 inliers.append(random_index)
             # print(inliers)
-            x1, y1, z1, _, _, _ = point_cloud.loc[inliers[0]]
-            x2, y2, z2, _, _, _ = point_cloud.loc[inliers[1]]
-            x3, y3, z3, _, _, _ = point_cloud.loc[inliers[2]]
+            try:
+                # In case of *.xyz data
+                x1, y1, z1, _, _, _ = point_cloud.loc[inliers[0]]
+                x2, y2, z2, _, _, _ = point_cloud.loc[inliers[1]]
+                x3, y3, z3, _, _, _ = point_cloud.loc[inliers[2]]
+            except:
+                # In case of *.pcd data
+                x1, y1, z1 = point_cloud.loc[inliers[0]]
+                x2, y2, z2 = point_cloud.loc[inliers[1]]
+                x3, y3, z3 = point_cloud.loc[inliers[2]]
             # Plane Equation --> ax + by + cz + d = 0
             # Value of Constants for inlier plane
             a = (y2 - y1)*(z3 - z1) - (z2 - z1)*(y3 - y1)
@@ -74,8 +82,14 @@ class RANSAC:
                 # Skip iteration if point matches the randomly generated inlier point
                 if index in inliers:
                     continue
-                x, y, z, _, _, _ = point[1]
-                # Calculate the nearness of the point to the inlier plane
+                try:
+                    # In case of *.xyz data
+                    x, y, z, _, _, _ = point[1]
+                except:
+                    # In case of *.pcd data
+                    x, y, z = point[1]
+
+                # Calculate the distance of the point to the inlier plane
                 distance = math.fabs(a*x + b*y + c*z + d)/plane_lenght
                 # Add the point as inlier, if within the threshold distancec ratio
                 if distance <= distance_ratio_threshold:
@@ -103,6 +117,8 @@ class RANSAC:
 
 if __name__ == "__main__":
     # Read the point cloud data
-    point_cloud = pd.read_csv("point_cloud_data_sample.xyz", delimiter=" ", nrows=500)
+    # point_cloud = pd.read_csv("point_cloud_data_sample.xyz", delimiter=" ", nrows=500)
+    pcd = o3d.io.read_point_cloud(r"C:\Users\Z0007157\PycharmProjects\Python_RANSAC\point_cloud_data_sample_2.pcd")
+    point_cloud = pd.DataFrame(pcd.points, columns={"X" ,"Y" ,"Z"})
     APPLICATION = RANSAC(point_cloud, max_iterations=50, distance_ratio_threshold=1)
     APPLICATION.run()
