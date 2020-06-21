@@ -118,7 +118,7 @@ class RANSAC:
 if __name__ == "__main__":
     # Read the point cloud data
     # point_cloud = pd.read_csv("point_cloud_data_sample.xyz", delimiter=" ", nrows=500)
-    pcd = o3d.io.read_point_cloud(r"C:\Users\Z0007157\PycharmProjects\Python_RANSAC\point_cloud_data_sample_2.pcd")
+    pcd = o3d.io.read_point_cloud(r"point_cloud_data_sample_2.pcd")
     point_cloud = pd.DataFrame(pcd.points, columns={"X" ,"Y" ,"Z"})
     APPLICATION = RANSAC(point_cloud, max_iterations=50, distance_ratio_threshold=1)
     APPLICATION.run()
